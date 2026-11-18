@@ -1,0 +1,19 @@
+# dependencies / build artefacts
+node_modules/
+__pycache__/
+.venv/
+
+# OS junk
+.DS_Store
+Thumbs.db
+*.swp
+
+# local previews
+shots/
+*.log
+
+# never commit credentials
+.env
+.env.*
+.netrc
+.git-credentials

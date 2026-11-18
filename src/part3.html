@@ -1,0 +1,547 @@
+<!-- ============ MOBILE BOTTOM BAR ============ -->
+<div class="mobile-bar" id="mobileBar" hidden>
+  <div class="mb-left"><b id="mbTotal">₹0</b><small id="mbItems">0 items</small></div>
+  <button class="btn btn-brand btn-sm" id="mbCta">View cart <svg class="ic"><use href="#i-arrow"/></svg></button>
+</div>
+
+<!-- ============ CART DRAWER ============ -->
+<div class="overlay" id="overlay"></div>
+
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Your booking cart">
+  <header class="drawer-head">
+    <div>
+      <h3>Your booking</h3>
+      <p id="drawerSub">Add services to get started</p>
+    </div>
+    <button class="icon-btn" id="drawerClose" aria-label="Close cart"><svg class="ic"><use href="#i-x"/></svg></button>
+  </header>
+
+  <div class="drawer-body">
+    <div class="cart-empty" id="cartEmpty">
+      <div class="ce-ic"><svg class="ic"><use href="#i-cart"/></svg></div>
+      <h4>Your cart is feeling warm</h4>
+      <p>Add a deep clean, a gas refill or an installation — your pro can be here today.</p>
+      <button class="btn btn-brand btn-sm" id="emptyShop">Browse services</button>
+    </div>
+
+    <div id="cartItems" class="cart-items"></div>
+
+    <div class="cart-extra" id="cartExtra" hidden>
+      <div class="coupon">
+        <div class="coupon-row">
+          <svg class="ic"><use href="#i-tag"/></svg>
+          <input id="couponInput" placeholder="Coupon code" aria-label="Coupon code" />
+          <button id="couponApply">Apply</button>
+        </div>
+        <p class="coupon-hint" id="couponHint">Try <b>CHILL20</b> — 20% off orders over ₹1,000</p>
+      </div>
+
+      <ul class="assurance">
+        <li><svg class="ic"><use href="#i-shield"/></svg> Free reschedule up to 2 hrs before</li>
+        <li><svg class="ic"><use href="#i-check"/></svg> Pay after the service is done</li>
+        <li><svg class="ic"><use href="#i-badge"/></svg> Verified, background-checked pros</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer class="drawer-foot" id="drawerFoot" hidden>
+    <div class="bill">
+      <div class="bill-row"><span>Item total</span><span id="bSubtotal">₹0</span></div>
+      <div class="bill-row save" id="bSaveRow"><span>Discount</span><span id="bDiscount">–</span></div>
+      <div class="bill-row"><span>GST (18%)</span><span id="bGst">₹0</span></div>
+      <div class="bill-total"><span>To pay</span><span id="bTotal">₹0</span></div>
+    </div>
+    <button class="btn btn-brand btn-block" id="checkoutBtn">Select slot &amp; book <svg class="ic"><use href="#i-arrow"/></svg></button>
+    <p class="foot-note"><svg class="ic"><use href="#i-lock"/></svg> Secure checkout · No charges today</p>
+  </footer>
+</aside>
+
+<!-- ============ BOOKING MODAL ============ -->
+<div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <button class="modal-x icon-btn" id="modalClose" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button>
+
+    <div id="modalStep1">
+      <div class="modal-head">
+        <span class="eyebrow">Almost there</span>
+        <h3 id="modalTitle">Pick a slot that suits you</h3>
+        <p>Same-day availability. Your pro will call 15 minutes before arriving.</p>
+      </div>
+
+      <div class="field">
+        <label>Service date</label>
+        <div class="date-chips" id="dateChips">
+          <button class="date-chip active" data-date="Today, 18 Nov">Today<span>18 Nov</span></button>
+          <button class="date-chip" data-date="Tomorrow, 19 Nov">Tomorrow<span>19 Nov</span></button>
+          <button class="date-chip" data-date="Thu, 20 Nov">Thursday<span>20 Nov</span></button>
+          <button class="date-chip" data-date="Fri, 21 Nov">Friday<span>21 Nov</span></button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Time slot</label>
+        <div class="slot-grid" id="slotGrid">
+          <button class="slot active" data-slot="9:00 – 11:00 AM">9:00 – 11:00 AM</button>
+          <button class="slot" data-slot="11:00 AM – 1:00 PM">11:00 AM – 1:00 PM</button>
+          <button class="slot" data-slot="1:00 – 3:00 PM">1:00 – 3:00 PM<span class="slot-tag">Few left</span></button>
+          <button class="slot" data-slot="3:00 – 5:00 PM">3:00 – 5:00 PM</button>
+          <button class="slot" data-slot="5:00 – 7:00 PM">5:00 – 7:00 PM</button>
+          <button class="slot" data-slot="7:00 – 9:00 PM">7:00 – 9:00 PM<span class="slot-tag">Few left</span></button>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="fName">Your name</label>
+          <input id="fName" placeholder="e.g. Ananya Sharma" value="Ananya Sharma" />
+        </div>
+        <div class="field">
+          <label for="fPhone">Mobile number</label>
+          <input id="fPhone" inputmode="numeric" maxlength="10" placeholder="10-digit number" value="9811045678" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="fAddr">Service address</label>
+        <input id="fAddr" placeholder="Flat / house, street, area" value="B-42, Greater Kailash II, New Delhi" />
+      </div>
+
+      <div class="modal-pay">
+        <div>
+          <span>Amount payable after service</span>
+          <b id="modalTotal">₹0</b>
+        </div>
+        <button class="btn btn-brand" id="confirmBtn">Confirm booking</button>
+      </div>
+    </div>
+
+    <div id="modalStep2" hidden>
+      <div class="success">
+        <div class="success-ring"><svg class="ic"><use href="#i-check"/></svg></div>
+        <h3>You're booked. Stay cool.</h3>
+        <p id="successLine">Your pro will arrive on your selected slot.</p>
+        <div class="success-card">
+          <div class="sc-row"><span>Booking ID</span><b id="sId">SHT-000000</b></div>
+          <div class="sc-row"><span>Service</span><b id="sService">—</b></div>
+          <div class="sc-row"><span>Slot</span><b id="sSlot">—</b></div>
+          <div class="sc-row"><span>Amount</span><b id="sAmount">—</b></div>
+          <div class="sc-row"><span>Technician</span><b>Assigned 1 hr before</b></div>
+        </div>
+        <button class="btn btn-primary btn-block" id="successDone">Done</button>
+        <p class="success-fine">A confirmation has been sent to your phone. Free reschedule up to 2 hours before the slot.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- state ---------------- */
+  var cart = [];                 // {id,name,price,was,qty}
+  var coupon = null;             // {code, type, value, min}
+  var selDate = "Today, 18 Nov";
+  var selSlot = "9:00 – 11:00 AM";
+
+  var COUPONS = {
+    CHILL20: { type:"pct", value:20, cap:500, min:1000, label:"20% off (max ₹500)" },
+    FIRST100:{ type:"flat", value:100, min:599, label:"₹100 off your first order" }
+  };
+
+  var $  = function(s, r){ return (r||document).querySelector(s); };
+  var $$ = function(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+  var money = function(n){ return "₹" + Math.round(n).toLocaleString("en-IN"); };
+
+  /* ---------------- toast ---------------- */
+  var toastEl = $("#toast"), toastTimer;
+  function toast(msg, kind){
+    toastEl.textContent = msg;
+    toastEl.className = "toast show" + (kind ? " " + kind : "");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.className = "toast"; }, 2600);
+  }
+
+  /* ---------------- cart core ---------------- */
+  function findItem(id){ for (var i=0;i<cart.length;i++) if (cart[i].id===id) return cart[i]; return null; }
+
+  function addToCart(d){
+    var ex = findItem(d.id);
+    if (ex){ ex.qty++; toast("Added another " + ex.name); }
+    else { cart.push({ id:d.id, name:d.name, price:+d.price, was:+(d.was||0), qty:1 }); toast(d.name + " added to cart", "ok"); }
+    render();
+    autoCoupon();
+  }
+  function changeQty(id, delta){
+    var it = findItem(id); if(!it) return;
+    it.qty += delta;
+    if (it.qty <= 0) cart = cart.filter(function(x){ return x.id !== id; });
+    render();
+    autoCoupon();
+  }
+  function removeItem(id){
+    cart = cart.filter(function(x){ return x.id !== id; });
+    render();
+    toast("Removed from cart");
+  }
+
+  function totals(){
+    var sub = cart.reduce(function(s,i){ return s + i.price*i.qty; }, 0);
+    var saved = cart.reduce(function(s,i){ return s + Math.max(0,(i.was||i.price)-i.price)*i.qty; }, 0);
+    var disc = 0;
+    if (coupon){
+      var c = COUPONS[coupon];
+      if (sub >= c.min){
+        disc = c.type === "pct" ? Math.min(sub*c.value/100, c.cap||Infinity) : c.value;
+      }
+    }
+    var taxable = Math.max(0, sub - disc);
+    var gst = taxable * 0.18;
+    return { sub:sub, saved:saved, disc:disc, gst:gst, total:taxable+gst, qty:cart.reduce(function(s,i){return s+i.qty;},0) };
+  }
+
+  /* ---------------- render ---------------- */
+  var cartItemsEl = $("#cartItems"), cartEmptyEl = $("#cartEmpty"),
+      cartExtraEl = $("#cartExtra"), drawerFootEl = $("#drawerFoot"),
+      drawerSubEl = $("#drawerSub"), cartCountEl = $("#cartCount"),
+      mobileBarEl = $("#mobileBar");
+
+  function render(){
+    var t = totals();
+
+    /* count badge */
+    if (t.qty > 0){ cartCountEl.textContent = t.qty; cartCountEl.hidden = false; }
+    else cartCountEl.hidden = true;
+
+    /* items */
+    cartItemsEl.innerHTML = "";
+    cart.forEach(function(it){
+      var row = document.createElement("div");
+      row.className = "cart-item";
+      row.innerHTML =
+        '<div class="ci-main">' +
+          '<div class="ci-title">' + it.name + '</div>' +
+          '<div class="ci-meta">' + money(it.price) + ' × ' + it.qty +
+            (it.was ? ' <s>' + money(it.was) + '</s>' : '') + '</div>' +
+        '</div>' +
+        '<div class="ci-right">' +
+          '<div class="stepper">' +
+            '<button aria-label="Decrease quantity" data-dec="' + it.id + '"><svg class="ic"><use href="#i-minus"/></svg></button>' +
+            '<span>' + it.qty + '</span>' +
+            '<button aria-label="Increase quantity" data-inc="' + it.id + '"><svg class="ic"><use href="#i-plus"/></svg></button>' +
+          '</div>' +
+          '<b class="ci-total">' + money(it.price*it.qty) + '</b>' +
+        '</div>' +
+        '<button class="ci-x" aria-label="Remove ' + it.name + '" data-rm="' + it.id + '"><svg class="ic"><use href="#i-x"/></svg></button>';
+      cartItemsEl.appendChild(row);
+    });
+
+    var empty = cart.length === 0;
+    cartEmptyEl.hidden = !empty;
+    cartExtraEl.hidden = empty;
+    drawerFootEl.hidden = empty;
+    mobileBarEl.hidden = empty;
+
+    drawerSubEl.textContent = empty
+      ? "Add services to get started"
+      : t.qty + " service" + (t.qty>1?"s":"") + " · " + (t.disc ? "saving " + money(t.disc) : "free cancellation");
+
+    $("#bSubtotal").textContent = money(t.sub);
+    $("#bDiscount").textContent = t.disc ? "–" + money(t.disc) : "–";
+    $("#bSaveRow").classList.toggle("is-zero", !t.disc);
+    $("#bGst").textContent = money(t.gst);
+    $("#bTotal").textContent = money(t.total);
+    $("#modalTotal").textContent = money(t.total);
+
+    if (mobileBarEl.hidden === false){
+      $("#mbTotal").textContent = money(t.total);
+      $("#mbItems").textContent = t.qty + " item" + (t.qty>1?"s":"") + " · " + (t.disc ? "saving " + money(t.disc) : "incl. GST");
+    }
+
+    /* sync card buttons */
+    $$("[data-add]").forEach(function(btn){
+      var card = btn.closest("[data-id]");
+      if (!card) return;
+      var id = card.getAttribute("data-id");
+      btn.classList.toggle("is-in", !!findItem(id));
+    });
+
+    renderAssurance(t);
+
+    var ci = $("#couponInput");
+    if (ci && document.activeElement !== ci) ci.value = coupon || "";
+  }
+
+  /* apply the headline coupon automatically once the cart qualifies */
+  function autoCoupon(){
+    if (coupon) return;
+    if (totals().sub >= COUPONS.CHILL20.min){
+      coupon = "CHILL20";
+      render();
+      toast("CHILL20 auto-applied · 20% off", "ok");
+    }
+  }
+
+  function renderAssurance(t){
+    var hint = $("#couponHint");
+    if (!hint) return;
+    if (coupon){
+      hint.innerHTML = '<b>' + coupon + '</b> applied — ' + COUPONS[coupon].label + '.';
+    } else if (t.sub > 0 && t.sub < 1000){
+      hint.innerHTML = "Add " + money(1000 - t.sub) + " more to unlock <b>CHILL20</b> (20% off).";
+    } else {
+      hint.innerHTML = 'Try <b>CHILL20</b> — 20% off orders over ₹1,000';
+    }
+  }
+
+  /* ---------------- drawer ---------------- */
+  var overlay = $("#overlay"), drawer = $("#drawer");
+  function openDrawer(){
+    drawer.classList.add("open"); overlay.classList.add("open");
+    drawer.setAttribute("aria-hidden","false"); document.body.classList.add("locked");
+    $("#drawerClose").focus();
+  }
+  function closeDrawer(){
+    drawer.classList.remove("open"); overlay.classList.remove("open");
+    drawer.setAttribute("aria-hidden","true"); document.body.classList.remove("locked");
+  }
+  $("#cartOpen").addEventListener("click", openDrawer);
+  $("#drawerClose").addEventListener("click", closeDrawer);
+  $("#emptyShop").addEventListener("click", function(){ closeDrawer(); smoothTo("#services"); });
+  $("#mbCta").addEventListener("click", openDrawer);
+  overlay.addEventListener("click", function(){ closeDrawer(); closeModal(); });
+
+  /* ---------------- add buttons ---------------- */
+  document.addEventListener("click", function(e){
+    var add = e.target.closest("[data-add]");
+    if (add){
+      var card = add.closest("[data-id]");
+      if (!card) return;
+      addToCart({
+        id: card.getAttribute("data-id"),
+        name: card.getAttribute("data-name") || card.querySelector(".card-title,.plan-top h4").textContent.trim(),
+        price: card.getAttribute("data-price"),
+        was: card.getAttribute("data-was")
+      });
+      add.classList.add("pulse");
+      setTimeout(function(){ add.classList.remove("pulse"); }, 500);
+      return;
+    }
+    var inc = e.target.closest("[data-inc]");
+    if (inc){ changeQty(inc.getAttribute("data-inc"), 1); return; }
+    var dec = e.target.closest("[data-dec]");
+    if (dec){ changeQty(dec.getAttribute("data-dec"), -1); return; }
+    var rm = e.target.closest("[data-rm]");
+    if (rm){ removeItem(rm.getAttribute("data-rm")); return; }
+    var sc = e.target.closest("[data-scroll]");
+    if (sc){ smoothTo(sc.getAttribute("data-scroll")); return; }
+    var cp = e.target.closest("[data-copy]");
+    if (cp){
+      var val = cp.getAttribute("data-copy");
+      try { navigator.clipboard.writeText(val); } catch(err){}
+      cp.textContent = "Copied";
+      toast("Code " + val + " copied");
+      setTimeout(function(){ cp.textContent = "Copy"; }, 1800);
+      return;
+    }
+  });
+
+  /* ---------------- coupon ---------------- */
+  $("#couponApply").addEventListener("click", function(){
+    var raw = $("#couponInput").value.trim().toUpperCase();
+    var t = totals();
+    if (!raw){ toast("Enter a coupon code"); return; }
+    if (!COUPONS[raw]){ toast("That code isn't valid"); return; }
+    if (t.sub < COUPONS[raw].min){
+      toast("Add " + money(COUPONS[raw].min - t.sub) + " more to use " + raw);
+      return;
+    }
+    coupon = raw; render(); toast(raw + " applied 🎉", "ok");
+  });
+  $("#couponInput").addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); $("#couponApply").click(); } });
+
+  /* ---------------- tabs + search ---------------- */
+  var chips = $$(".chip");
+  chips.forEach(function(chip){
+    chip.addEventListener("click", function(){
+      chips.forEach(function(c){ c.classList.remove("active"); c.setAttribute("aria-selected","false"); });
+      chip.classList.add("active"); chip.setAttribute("aria-selected","true");
+      applyFilter();
+      if (chip.getAttribute("data-filter") === "plan") smoothTo("#plans");
+      else if (chip.getAttribute("data-filter") === "parts") smoothTo("#spares");
+      else if (chip.getAttribute("data-filter") !== "all") smoothTo("#services");
+    });
+  });
+
+  var searchInput = $("#searchInput");
+  function applyFilter(){
+    var f = ($(".chip.active") || {}).getAttribute ? $(".chip.active").getAttribute("data-filter") : "all";
+    var q = (searchInput.value || "").trim().toLowerCase();
+    var anyVisible = false;
+
+    $$(".group").forEach(function(group){
+      var g = group.getAttribute("data-group");
+      var groupMatch = (f === "all" || f === g);
+      var shown = 0;
+      $$(".card", group).forEach(function(card){
+        var text = (card.textContent + " " + card.getAttribute("data-name")).toLowerCase();
+        var ok = groupMatch && (!q || text.indexOf(q) > -1);
+        card.classList.toggle("card-hide", !ok);
+        if (ok) shown++;
+      });
+      group.style.display = (shown === 0) ? "none" : "";
+      if (shown > 0) anyVisible = true;
+    });
+
+    var showEmpty = (!anyVisible && q.length > 0);
+    var es = $("#emptySearch");
+    es.hidden = !showEmpty;
+
+    /* cards hidden by tab shouldn't count as "no results" when searching */
+    if (!q && !anyVisible){ es.hidden = true; }
+  }
+  searchInput.addEventListener("input", applyFilter);
+  $("#clearSearch").addEventListener("click", function(){ searchInput.value = ""; applyFilter(); searchInput.focus(); });
+
+  /* ---------------- price list accordion ---------------- */
+  $$(".pl-head").forEach(function(head){
+    head.addEventListener("click", function(){
+      var group = head.parentElement;
+      var isOpen = group.classList.contains("open");
+      $$(".pl-group").forEach(function(g){ g.classList.remove("open"); $(".pl-head", g).setAttribute("aria-expanded","false"); });
+      if (!isOpen){ group.classList.add("open"); head.setAttribute("aria-expanded","true"); }
+    });
+  });
+
+  /* ---------------- header + rail ---------------- */
+  var header = $("#header");
+  function onScroll(){
+    header.classList.toggle("stuck", window.scrollY > 8);
+  }
+  window.addEventListener("scroll", onScroll, { passive:true });
+
+  function smoothTo(sel){
+    var el = document.querySelector(sel);
+    if (!el) return;
+    var y = el.getBoundingClientRect().top + window.scrollY - 150;
+    window.scrollTo({ top:y, behavior:"smooth" });
+  }
+  $$('a[href^="#"]').forEach(function(a){
+    a.addEventListener("click", function(e){
+      var href = a.getAttribute("href");
+      if (href.length > 1){
+        e.preventDefault();
+        smoothTo(href);
+      }
+    });
+  });
+
+  /* ---------------- city dropdown ---------------- */
+  var cityPill = $("#cityPill"), cityMenu = $("#cityMenu");
+  cityPill.addEventListener("click", function(e){
+    if (e.target.closest(".city-menu button")) return;
+    cityMenu.classList.toggle("open");
+    cityPill.setAttribute("aria-expanded", cityMenu.classList.contains("open"));
+  });
+  $$(".city-menu button").forEach(function(b){
+    b.addEventListener("click", function(){
+      $$(".city-menu button").forEach(function(x){ x.classList.remove("active"); });
+      b.classList.add("active");
+      $("#cityName").textContent = b.getAttribute("data-city");
+      cityMenu.classList.remove("open");
+      cityPill.setAttribute("aria-expanded","false");
+      toast("Now serving " + b.getAttribute("data-city"));
+    });
+  });
+  document.addEventListener("click", function(e){
+    if (!e.target.closest("#cityPill")) cityMenu.classList.remove("open");
+  });
+
+  /* ---------------- booking modal ---------------- */
+  var modal = $("#modal");
+  function openModal(){
+    if (cart.length === 0){ toast("Add a service first"); openDrawer(); return; }
+    closeDrawer();
+    modal.classList.add("open"); modal.setAttribute("aria-hidden","false");
+    document.body.classList.add("locked");
+    $("#modalStep2").hidden = true; $("#modalStep1").hidden = false;
+    $("#modalTotal").textContent = money(totals().total);
+    setTimeout(function(){ $("#confirmBtn").focus(); }, 120);
+  }
+  function closeModal(){
+    modal.classList.remove("open"); modal.setAttribute("aria-hidden","true");
+    document.body.classList.remove("locked");
+  }
+  $("#checkoutBtn").addEventListener("click", openModal);
+  $("#modalClose").addEventListener("click", closeModal);
+  $("#successDone").addEventListener("click", function(){ closeModal(); });
+
+  $$(".date-chip").forEach(function(c){
+    c.addEventListener("click", function(){
+      $$(".date-chip").forEach(function(x){ x.classList.remove("active"); });
+      c.classList.add("active"); selDate = c.getAttribute("data-date");
+    });
+  });
+  $$(".slot").forEach(function(s){
+    s.addEventListener("click", function(){
+      $$(".slot").forEach(function(x){ x.classList.remove("active"); });
+      s.classList.add("active"); selSlot = s.getAttribute("data-slot");
+    });
+  });
+
+  $("#fPhone").addEventListener("input", function(e){
+    e.target.value = e.target.value.replace(/\D/g,"").slice(0,10);
+  });
+
+  $("#confirmBtn").addEventListener("click", function(){
+    var name = $("#fName").value.trim(), phone = $("#fPhone").value.trim(), addr = $("#fAddr").value.trim();
+    if (name.length < 2){ toast("Please enter your name"); $("#fName").focus(); return; }
+    if (phone.length !== 10){ toast("Enter a valid 10-digit mobile number"); $("#fPhone").focus(); return; }
+    if (addr.length < 8){ toast("Please add your full address"); $("#fAddr").focus(); return; }
+
+    var t = totals();
+    var id = "SHT-" + String(Math.floor(100000 + Math.random()*900000));
+    $("#sId").textContent = id;
+    $("#sService").textContent = cart.length + " service" + (cart.length>1?"s":"") + " · " + cart[0].name + (cart.length>1 ? " +" + (cart.length-1) : "");
+    $("#sSlot").textContent = selDate + " · " + selSlot;
+    $("#sAmount").textContent = money(t.total);
+    $("#successLine").textContent = name.split(" ")[0] + ", your pro arrives on " + selDate.toLowerCase() + " between " + selSlot + " at " + addr.split(",")[0] + ".";
+    $("#modalStep1").hidden = true; $("#modalStep2").hidden = false;
+    cart = []; coupon = null; render();
+    toast("Booking confirmed · " + id, "ok");
+  });
+
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape"){ closeDrawer(); closeModal(); cityMenu.classList.remove("open"); }
+  });
+
+  /* ---------------- reveal on scroll ---------------- */
+  var io = null;
+  if ("IntersectionObserver" in window){
+    io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); }
+      });
+    }, { threshold:0.06, rootMargin:"0px 0px -30px 0px" });
+    $$(".card, .step, .rev, .why-item, .plan, .pl-group").forEach(function(el, i){
+      el.classList.add("reveal");
+      el.style.transitionDelay = (i % 4) * 55 + "ms";
+      io.observe(el);
+    });
+    /* safety net: never leave content invisible */
+    setTimeout(function(){
+      $$(".reveal").forEach(function(el){ el.classList.add("in"); });
+    }, 2600);
+  } else {
+    $$(".card, .step, .rev, .why-item, .plan, .pl-group").forEach(function(el){ el.classList.add("in"); });
+  }
+
+  /* ---------------- init ---------------- */
+  render();
+  onScroll();
+})();
+</script>
+</body>
+</html>
