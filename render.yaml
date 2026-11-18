@@ -1,9 +1,22 @@
 # Render Blueprint — https://render.com/docs/blueprint-spec
-# Deploy: New + → Blueprint → pick this repo. No build step is needed,
-# index.html at the repo root is already fully self-contained.
+#
+# Two services, one domain:
+#
+#   www.<domain>   static site   → the public marketing page (never sleeps)
+#   app.<domain>   web service   → /login, /account, /expert, /api/*  (this file)
+#
+# A Render cron job is defined but commented out: cron runs on a paid instance
+# type only, so on the free tier the same endpoint is hit by
+# .github/workflows/dispatch-sweep.yml every 5 minutes instead.
+#
+# NOTE: if you already created the static site by hand in the dashboard, delete
+# the `sheetal-site` block below before hitting "Apply" — otherwise Render will
+# create a second, duplicate static site.
+
 services:
+  # ---------------------------------------------------------------- marketing
   - type: web
-    name: sheetal-ac-service
+    name: sheetal-site
     runtime: static
     buildCommand: ""
     staticPublishPath: .
@@ -14,16 +27,82 @@ services:
       - type: redirect
         source: /build.py
         destination: /
+      - type: redirect
+        source: /platform/*
+        destination: /
     headers:
       - path: /*
         name: X-Content-Type-Options
         value: nosniff
-      - path: /*
-        name: X-Frame-Options
-        value: SAMEORIGIN
-      - path: /*
-        name: Referrer-Policy
-        value: strict-origin-when-cross-origin
       - path: /assets/*
         name: Cache-Control
         value: public, max-age=31536000, immutable
+
+  # ------------------------------------------------------------ app + API
+  - type: web
+    name: sheetal-app
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: platform
+    # migrations run on every boot; the runner is idempotent and lock-protected,
+    # so a wake-from-sleep or a second instance is harmless
+    buildCommand: npm ci && npm run build
+    startCommand: npm run db:migrate && npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      # Neon pooled connection string (set in dashboard)
+      - key: DATABASE_URL
+        sync: false
+      # Neon unpooled connection string (set in dashboard)
+      - key: DIRECT_DATABASE_URL
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: CRON_SECRET
+        generateValue: true
+      - key: APP_ORIGIN
+        sync: false
+      - key: COOKIE_DOMAIN
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.5-flash-lite
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET
+        sync: false
+      - key: META_APP_SECRET
+        sync: false
+      - key: META_VERIFY_TOKEN
+        sync: false
+      - key: META_ACCESS_TOKEN
+        sync: false
+      - key: META_PHONE_NUMBER_ID
+        sync: false
+
+  # ------------------------------------------------------- queue sweep (paid)
+  # Uncomment when you move the app service to a paid instance type, then
+  # disable the GitHub Actions workflow.
+  #
+  # - type: cron
+  #   name: sheetal-dispatch
+  #   runtime: node
+  #   plan: starter
+  #   region: singapore
+  #   schedule: "* * * * *"
+  #   buildCommand: ""
+  #   startCommand: >-
+  #     curl -fsS -X POST
+  #     -H "Authorization: Bearer $CRON_SECRET"
+  #     "https://app.example.in/api/cron/dispatch"

@@ -1,0 +1,47 @@
+name: dispatch sweep
+
+# ---------------------------------------------------------------------------
+# This file lives in ops/github/ rather than .github/workflows/ because pushing
+# a workflow requires a GitHub token with the `workflow` scope.
+# To enable the free-tier sweep:
+#   git mv ops/github/dispatch-sweep.yml .github/workflows/dispatch-sweep.yml
+# — or paste it in the GitHub web UI: Actions → New workflow → paste → commit.
+# Then add repo secret CRON_SECRET and repo variable APP_BASE_URL.
+# ---------------------------------------------------------------------------
+
+# Free-tier stand-in for a Render cron job.
+# GitHub's scheduler is best-effort (can slip 5-15 min), which is fine for the
+# outbox drain but NOT for anything a customer is waiting on — interactive work
+# always runs inline in the request. Delete this file once the app service is
+# on a paid instance type and render.yaml's cron block is enabled.
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: dispatch-sweep
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Call /api/cron/dispatch
+        env:
+          BASE_URL: ${{ vars.APP_BASE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -euo pipefail
+          if [ -z "${BASE_URL:-}" ] || [ -z "${CRON_SECRET:-}" ]; then
+            echo "APP_BASE_URL repo variable and CRON_SECRET repo secret are required"; exit 1
+          fi
+          code=$(curl -sS -o response.json -w '%{http_code}' \
+            --max-time 55 --retry 2 --retry-connrefused \
+            -X POST -H "Authorization: Bearer ${CRON_SECRET}" \
+            "${BASE_URL}/api/cron/dispatch")
+          cat response.json; echo
+          # 502/503 on a sleeping free instance is expected; the next run recovers.
+          if [ "$code" -ge 500 ]; then echo "upstream $code (instance may be asleep)"; fi
