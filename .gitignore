@@ -15,5 +15,15 @@ shots/
 # never commit credentials
 .env
 .env.*
+!.env.example
+!**/.env.example
 .netrc
 .git-credentials
+
+# platform (Next.js)
+platform/node_modules/
+platform/.next/
+platform/next-env.d.ts
+platform/.env
+platform/.env.local
+*.tsbuildinfo
